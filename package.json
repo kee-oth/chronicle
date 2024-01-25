@@ -1,22 +1,24 @@
 {
-  "name": "vite-vanilla-library",
+  "name": "chronicle",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "exports": {
     ".": {
-      "import": "./dist/vite-vanilla-library.js",
-      "require": "./dist/vite-vanilla-library.cjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/vite-vanilla-library.cjs",
-  "module": "./dist/vite-vanilla-library.js",
-  "types": "./dist/vite-vanilla-library.d.ts",
-  "files": ["dist"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "release": "pnpm test && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
+    "release": "npm test && npm build && npm publish && git push --follow-tags",
     "lint": "eslint . --fix",
     "test": "vitest --run",
     "test:watch": "vitest",
@@ -25,12 +27,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.3",
-    "@commitlint/cli": "^18.4.4",
-    "@commitlint/config-conventional": "^18.4.4",
     "@types/node": "^20.11.5",
-    "@vitest/coverage-v8": "^1.2.1",
-    "camelcase": "^8.0.0",
-    "changelogen": "^0.5.5",
     "eslint": "^8.56.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
@@ -40,6 +37,6 @@
     "vitest": "^1.2.1"
   },
   "lint-staged": {
-    "*.ts": "pnpm run lint"
+    "*.ts": "npm run lint"
   }
 }
