@@ -1,44 +1,120 @@
-# Vite Vanilla Library Template
+# Chronicle
 
-Template for creating a library with a fully customized environment.
+## 🚧 Work in progress! 🚧
 
-## Features
+Chronicle's API is subject to change. (We have a lot of ideas! 😁)
 
-* ✨ Fully customized [eslint](https://eslint.org/) configuration based on the config by [Antfu](https://github.com/antfu/eslint-config)
-* 🧪 Write tests quickly and conveniently with [vitest](https://vitest.dev/)
-* 🤝 Supports [conventional commits](https://www.conventionalcommits.org/)
-* 💅 Generate beautiful changelogs with [changelogen](https://github.com/unjs/changelogen)
-* ♾️ GitHub CI for your build
-* 🤖 Ready configuration for [dependabot](https://github.com/dependabot)
-* 🚀 Library releases with just one command
+Please check back later to see the improvements. And note that this Readme currently acts as the official and only set of documentation. 
 
-## Get started
+Please open an issue if you want to
 
-### GitHub Template
+* request a feature
+* request documentation clarification
+* report a bug
 
-This is a template repo. Click the green [Use this template](https://github.com/hywax/vite-vanilla-library-template/generate) button to get started.
 
-### Git Clone
+## What is Chronicle?
 
-```shell
-git clone https://github.com/hywax/vite-vanilla-library-template.git
-cd vite-vanilla-library-template
-pnpm install
+Chronicle is a tracing library that lets you trace arbitrary code execution flows within you JavaScript or TypeScript application. 
+
+Chronicle has 0 dependencies and is very small (less than 1kb!).
+
+### What is Chronicle useful for?
+
+Glad you asked! Here are some common use cases:
+
+* Error tracing
+* Logging
+* Performance profiling
+
+
+## Project goals
+
+Chronicle should be
+* Robust – Chronicle should be reliable and never cause you issues
+* Predictable – Chronicle shouldn't do anything unexpected
+* Intuitive & ergonomic – Chronicle should be easy to use
+
+
+## Quick examples
+
+### Basic usage
+```ts
+// Create a Chronicle of your custom Event type (`string` in this example)
+const myChronicle = createChronicle<string>("First event");
+
+// Add some records to your Chronicle
+myChronicle.addRecord("Second event")
+myChronicle.addRecord("Third event")
+
+// Access the most recently added Event
+myChronicle.currentEvent // "First event"
+
+// Access past Events
+myChronicle.pastEvents // [ "Second event", "Third event" ]
+
+// Access all Events
+myChronicle.allEvents // [ "Second event", "Third event" ]
 ```
 
-## Usage
+You don't need to specify the generic if you don't want to – TypeScript will infer the correct type itself.
+```ts
+const myChronicle = createChronicle("First event"); // TypeScript will infer Chronicle<string>
+```
 
-The template contains the following scripts:
 
-* `dev` - Start the development server
-* `build` - Build for production
-* `release` - Generate changelog and npm publish
-* `lint` - Checks your code for any linting errors
-* `test` - Run all tests
-* `test:watch` - Run all tests with watch mode
-* `test:coverage` - Run all tests with code coverage report
-* `prepare` - Script for setting up husky hooks
+### Chronicling errors via a custom Failure type
+```ts
+type Failure = {
+  name: string;
+  reason?: string;
+};
 
-## License
+const failureChronicle = createChronicle<Failure>({
+  name: 'FAILURE_A',
+  reason: 'Cannot divide by 0.',
+});
 
-This template was created under the [MIT License](LICENSE).
+failureChronicle.addEvent({
+  name: 'FAILURE_B',
+});
+failureChronicle.addEvent({
+  name: 'FAILURE_C',
+});
+
+failureChronicle.allEvents 
+
+/*
+Results in 
+[
+  {
+    name: 'FAILURE_C',
+  },
+  {
+    name: 'FAILURE_B',
+  },
+  {
+    name: 'FAILURE_A',
+    reason: 'Cannot divide by 0.',
+  }
+]
+*/
+```
+
+Transform a Chronicle's Events
+```ts
+const deepCopyOfEvents = failureChronicle.transformEvents((failure) => ({
+  ...failure,
+  name: `TRANSFORMED_${failure.name}`,
+}));
+```
+Note that tranforming a Chronicle's Events _will_ set the Chronicle's Events to the tranformed Events. `transformEvents` will return a deep clone of the transformed Events.
+
+If all you want to do is transform a Chronicle's Events and _not_ actually update them within the Chronicle, you can use `getEvents`. 
+```ts
+const retrievedEvents = failureChronicle.getEvents((failures) => {
+  return failures.map((failure) => failure.name).join(', ');
+});
+
+retrievedEvents
+```

@@ -15,9 +15,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v2
+      - uses: npm/action-setup@v2
         with:
           version: 8
           run_install: true
-      - run: pnpm build
-      - run: pnpm test
+      - run: npm build
+      - run: npm test

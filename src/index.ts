@@ -1,2 +1,2 @@
-export { createArchive } from './archive'
+export { createChronicle } from './chronicle'
 
