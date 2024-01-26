@@ -43,18 +43,18 @@ Chronicle should be
 // Create a Chronicle of your custom Event type (`string` in this example)
 const myChronicle = createChronicle<string>("First event");
 
-// Add some records to your Chronicle
-myChronicle.addRecord("Second event")
-myChronicle.addRecord("Third event")
+// Add some Events to your Chronicle
+myChronicle.addEvent("Second event")
+myChronicle.addEvent("Third event")
 
 // Access the most recently added Event
-myChronicle.currentEvent // "First event"
+myChronicle.currentEvent // "Third event"
 
 // Access past Events
-myChronicle.pastEvents // [ "Second event", "Third event" ]
+myChronicle.pastEvents // [ "Second event", "First event" ]
 
 // Access all Events
-myChronicle.allEvents // [ "Second event", "Third event" ]
+myChronicle.allEvents // [ "Third event", "Second event", "First event" ]
 ```
 
 You don't need to specify the generic if you don't want to – TypeScript will infer the correct type itself.
