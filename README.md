@@ -23,9 +23,11 @@ Chronicle has 0 dependencies and is very small (less than 1kb!).
 
 Glad you asked! Here are some common use cases:
 
+* Context passing for control flow decisions
 * Error tracing
 * Logging
 * Performance profiling
+* Debugging
 
 
 ## Project goals
