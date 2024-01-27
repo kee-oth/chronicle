@@ -4,7 +4,7 @@
 
 Chronicle's API is subject to change. (We have a lot of ideas! 😁)
 
-Please check back later to see the improvements. And note that this Readme currently acts as the official and only set of documentation. 
+Please check back later to see the improvements. And note that this Readme currently acts as the official and only set of documentation.
 
 Please open an issue if you want to
 
@@ -12,10 +12,9 @@ Please open an issue if you want to
 * request documentation clarification
 * report a bug
 
-
 ## What is Chronicle?
 
-Chronicle is a tracing library that lets you trace arbitrary code execution flows within you JavaScript or TypeScript application. 
+Chronicle is a tracing library that lets you trace arbitrary code execution flows within you JavaScript or TypeScript application.
 
 Chronicle has 0 dependencies and is very small (less than 1kb!).
 
@@ -29,7 +28,6 @@ Glad you asked! Here are some common use cases:
 * Performance profiling
 * Debugging
 
-
 ## Project goals
 
 Chronicle should be
@@ -37,57 +35,55 @@ Chronicle should be
 * Predictable – Chronicle shouldn't do anything unexpected
 * Intuitive & ergonomic – Chronicle should be easy to use
 
-
 ## Quick examples
 
 ### Basic usage
 ```ts
 // Create a Chronicle of your custom Event type (`string` in this example)
-const myChronicle = createChronicle<string>("First event");
+const myChronicle = createChronicle<string>('First event')
 
 // Add some Events to your Chronicle
-myChronicle.addEvent("Second event")
-myChronicle.addEvent("Third event")
+myChronicle.addEvent('Second event')
+myChronicle.addEvent('Third event')
 
 // Access the most recently added Event
-myChronicle.currentEvent // "Third event"
+myChronicle.getCurrentEvent() // "Third event"
 
 // Access past Events
-myChronicle.pastEvents // [ "Second event", "First event" ]
+myChronicle.getPastEvents() // [ "Second event", "First event" ]
 
 // Access all Events
-myChronicle.allEvents // [ "Third event", "Second event", "First event" ]
+myChronicle.getAllEvents() // [ "Third event", "Second event", "First event" ]
 ```
 
 You don't need to specify the generic if you don't want to – TypeScript will infer the correct type itself.
 ```ts
-const myChronicle = createChronicle("First event"); // TypeScript will infer Chronicle<string>
+const myChronicle = createChronicle('First event') // TypeScript will infer Chronicle<string>
 ```
-
 
 ### Chronicling errors via a custom Failure type
 ```ts
-type Failure = {
-  name: string;
-  reason?: string;
-};
+interface Failure {
+  name: string
+  reason?: string
+}
 
 const failureChronicle = createChronicle<Failure>({
   name: 'FAILURE_A',
   reason: 'Cannot divide by 0.',
-});
+})
 
 failureChronicle.addEvent({
   name: 'FAILURE_B',
-});
+})
 failureChronicle.addEvent({
   name: 'FAILURE_C',
-});
+})
 
-failureChronicle.allEvents 
+failureChronicle.getAllEvents()
 
 /*
-Results in 
+Results in
 [
   {
     name: 'FAILURE_C',
@@ -103,20 +99,18 @@ Results in
 */
 ```
 
-Transform a Chronicle's Events
+Transform a Chronicle's internal Events
 ```ts
-const deepCopyOfEvents = failureChronicle.transformEvents((failure) => ({
-  ...failure,
-  name: `TRANSFORMED_${failure.name}`,
-}));
-```
-Note that tranforming a Chronicle's Events _will_ set the Chronicle's Events to the tranformed Events. `transformEvents` will return a deep clone of the transformed Events.
+const someChronicle = createChronicle('Initial event')
 
-If all you want to do is transform a Chronicle's Events and _not_ actually update them within the Chronicle, you can use `getEvents`. 
-```ts
-const retrievedEvents = failureChronicle.getEvents((failures) => {
-  return failures.map((failure) => failure.name).join(', ');
-});
+const deepCopyOfEvents = someChronicle.transformInternalEvents((event) => {
+  return `Transformed ${event}`
+})
 
-retrievedEvents
+deepCopyOfEvents // ["Transformed Initial event"]
+someChronical.getAllEvents() // ["Transformed Initial event"]
+
+deepCopyOfEvents === someChronical.getAllEvents() // false
 ```
+Note that tranforming a Chronicle's Events _will_ set the Chronicle's Events to the tranformed Events. `transformInternalEvents` will return a deep clone of the transformed Events. The return value of the
+passed in transformation function must match the Chronicle's Event type.
