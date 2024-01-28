@@ -1,2 +1,1 @@
 export { createChronicle } from './chronicle'
-
