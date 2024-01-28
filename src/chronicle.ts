@@ -1,28 +1,40 @@
-interface Chronicle<Event> {
+type Chronicle<Event> = {
+  addEvent: (newEvent: Event) => ThisType<Event> // This mutates the Chronicle and returns it (as `this`)
+  getAllEvents: () => Event[]
   getCurrentEvent: () => Event
   getPastEvents: () => Event[]
-  getAllEvents: () => Event[]
-  addEvent: (newEvent: Event) => ThisType<Event> // This mutates the Chronicle and returns it (as `this`)
   transformInternalEvents: (eventTransformer: (event: Event) => Event) => Event[] // this will transform the internal Events
 }
 
-export function createChronicle<Event>(initialEvent: Event): Chronicle<Event> {
-  let currentEvent: Event = initialEvent
-  let pastEvents: Event[] = []
+type CreateChronicleOptions<Event> = {
+  onAddEntry?: (entry: Event) => void
+}
+
+export function createChronicle<Event>(initialEvent: Event, options?: CreateChronicleOptions<Event>): Chronicle<Event> {
+  let currentEvent: Event
+  let pastEvents: Event[]
+
+  const initialize = () => {
+    currentEvent = structuredClone(initialEvent)
+    pastEvents = []
+
+    options?.onAddEntry?.(structuredClone(initialEvent))
+  }
+
+  initialize()
 
   return {
     addEvent(newEvent) {
       pastEvents = [currentEvent, ...pastEvents]
       // Important to not mutate currentEvent until after setting pastEvents
-      currentEvent = newEvent
+      currentEvent = structuredClone(newEvent)
+      options?.onAddEntry?.(structuredClone(newEvent))
       return this
     },
     getCurrentEvent: () => structuredClone(currentEvent),
     getPastEvents: () => structuredClone(pastEvents),
     getAllEvents: () => structuredClone([currentEvent, ...pastEvents]),
     transformInternalEvents(eventTransformer): Event[] {
-      // TODO: handle errors
-
       // Transform the Events
       const transformedEvents = this.getAllEvents().map((event) =>
         eventTransformer(event),

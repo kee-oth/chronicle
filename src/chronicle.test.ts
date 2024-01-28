@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createChronicle } from '../src'
 
 describe('createChronicle', () => {
@@ -101,5 +101,19 @@ describe('createChronicle', () => {
 
     // Assert
     expect(isAllEventsInOrderFromNewToOld).toBe(true)
+  })
+
+  it('should run onAddEvent callback when adding an event', () => {
+    // Setup
+    const callback = vi.fn()
+
+    // Test
+    const chronicle = createChronicle<string>('First event', { onAddEntry: callback })
+    chronicle.addEvent('Second event')
+
+    // Assert
+    expect(callback).toHaveBeenCalledTimes(2)
+    expect(callback).toHaveBeenCalledWith('First event')
+    expect(callback).toHaveBeenCalledWith('Second event')
   })
 })
