@@ -2,7 +2,7 @@
   "name": "@keeoth/chronicle",
   "type": "module",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "release": "npm test && npm build && npm publish && git push --follow-tags",
+    "release": "npm run test && npm run build && npm publish && git push --follow-tags",
     "lint": "eslint . --fix",
     "test": "vitest --run",
     "test:watch": "vitest",
