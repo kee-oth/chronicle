@@ -21,7 +21,6 @@ describe('createChronicle', () => {
 
     // Test
     chronicle.addEvent(eventToAdd)
-
     // Assert
     expect(chronicle.getCurrentEvent()).toEqual(eventToAdd)
   })
@@ -103,17 +102,30 @@ describe('createChronicle', () => {
     expect(isAllEventsInOrderFromNewToOld).toBe(true)
   })
 
-  it('should run onAddEvent callback when adding an event', () => {
+  it('should run Chronicle onAddEvent callback when adding an event', () => {
     // Setup
-    const callback = vi.fn()
+    const onAddEvent = vi.fn()
 
     // Test
-    const chronicle = createChronicle<string>('First event', { onAddEntry: callback })
+    const chronicle = createChronicle<string>('First event', { onAddEvent })
     chronicle.addEvent('Second event')
 
     // Assert
-    expect(callback).toHaveBeenCalledTimes(2)
-    expect(callback).toHaveBeenCalledWith('First event')
-    expect(callback).toHaveBeenCalledWith('Second event')
+    expect(onAddEvent).toHaveBeenCalledTimes(2)
+    expect(onAddEvent).toHaveBeenCalledWith('First event')
+    expect(onAddEvent).toHaveBeenCalledWith('Second event')
+  })
+
+  it('should run local onAddEvent callback when adding an event', () => {
+    // Setup
+    const onAddEvent = vi.fn()
+
+    // Test
+    const chronicle = createChronicle<string>('First event')
+    chronicle.addEvent('Second event', onAddEvent)
+
+    // Assert
+    expect(onAddEvent).toHaveBeenCalledTimes(1)
+    expect(onAddEvent).toHaveBeenCalledWith('Second event')
   })
 })

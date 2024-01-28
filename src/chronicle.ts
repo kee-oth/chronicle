@@ -1,5 +1,5 @@
 type Chronicle<Event> = {
-  addEvent: (newEvent: Event) => ThisType<Event> // This mutates the Chronicle and returns it (as `this`)
+  addEvent: (newEvent: Event, onAddEvent?: (addedEvent: Event) => void) => void
   getAllEvents: () => Event[]
   getCurrentEvent: () => Event
   getPastEvents: () => Event[]
@@ -7,7 +7,7 @@ type Chronicle<Event> = {
 }
 
 type CreateChronicleOptions<Event> = {
-  onAddEntry?: (entry: Event) => void
+  onAddEvent?: (entry: Event) => void
 }
 
 export function createChronicle<Event>(initialEvent: Event, options?: CreateChronicleOptions<Event>): Chronicle<Event> {
@@ -18,18 +18,22 @@ export function createChronicle<Event>(initialEvent: Event, options?: CreateChro
     currentEvent = structuredClone(initialEvent)
     pastEvents = []
 
-    options?.onAddEntry?.(structuredClone(initialEvent))
+    options?.onAddEvent?.(structuredClone(initialEvent))
   }
 
   initialize()
 
   return {
-    addEvent(newEvent) {
+    addEvent(newEvent: Event, onAddEvent) {
       pastEvents = [currentEvent, ...pastEvents]
       // Important to not mutate currentEvent until after setting pastEvents
       currentEvent = structuredClone(newEvent)
-      options?.onAddEntry?.(structuredClone(newEvent))
-      return this
+
+      // Chronicle callback
+      options?.onAddEvent?.(structuredClone(newEvent))
+
+      // Local callback
+      onAddEvent?.(newEvent)
     },
     getCurrentEvent: () => structuredClone(currentEvent),
     getPastEvents: () => structuredClone(pastEvents),
