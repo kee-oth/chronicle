@@ -1,4 +1,4 @@
-type Chronicle<Event> = {
+export type Chronicle<Event> = {
   addEvent: (newEvent: Event, onAddEvent?: (addedEvent: Event) => void) => void
   getAllEvents: () => Event[]
   getCurrentEvent: () => Event
