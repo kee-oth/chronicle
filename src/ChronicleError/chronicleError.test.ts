@@ -179,4 +179,44 @@ describe('the ChronicleError class', () => {
     // Assert
     expect(id).toBeTruthy()
   })
+
+  it('should check if an event is included', () => {
+    // Setup
+    const chronicleError = new ChronicleError('First event', 'Error!')
+    chronicleError.addEvent('Second event')
+
+    // Test
+    const doesChronicleHaveFirstEvent = chronicleError.includes('First event')
+    const doesChronicleHaveSecondEvent = chronicleError.includes('Second event')
+    const doesChronicleHaveThirdEvent = chronicleError.includes('Third event')
+
+    // Assert
+    expect(doesChronicleHaveFirstEvent).toBe(true)
+    expect(doesChronicleHaveSecondEvent).toBe(true)
+    expect(doesChronicleHaveThirdEvent).toBe(false)
+  })
+
+  it('should check if an event is included with custom comparator', () => {
+    // Setup
+    type EventKindName = 'EVENT_1' | 'EVENT_2' | 'EVENT_3'
+    type EventKind = {
+      name: EventKindName
+      timestamp: Date
+    }
+
+    const chronicleError = new ChronicleError<EventKind, EventKindName>({ name: 'EVENT_1', timestamp: new Date() }, 'Error!', {
+      comparator: (eventToCompare, compareWith) => eventToCompare.name === compareWith,
+    })
+    chronicleError.addEvent({ name: 'EVENT_2', timestamp: new Date() })
+
+    // Test
+    const doesChronicleHaveFirstEvent = chronicleError.includes('EVENT_1')
+    const doesChronicleHaveSecondEvent = chronicleError.includes('EVENT_2')
+    const doesChronicleHaveThirdEvent = chronicleError.includes('EVENT_3')
+
+    // Assert
+    expect(doesChronicleHaveFirstEvent).toBe(true)
+    expect(doesChronicleHaveSecondEvent).toBe(true)
+    expect(doesChronicleHaveThirdEvent).toBe(false)
+  })
 })

@@ -1,19 +1,25 @@
-export type CreateChronicleOptions<Event> = {
+export type CreateChronicleOptions<Event, CompareWith> = {
+  comparator?: (eventToCompare: Event, compareWith: CompareWith) => boolean
   onAddEvent?: (event: Event, chronicleId: string) => void
 }
 
 // Export from package as type, only export  "createChronicle" function
-export class Chronicle<Event> {
+export class Chronicle<Event, CompareEventsWith = Event> {
   declare private currentEvent: Event
   declare private pastEvents: Event[]
   declare private onAddEvent: ((event: Event, chronicleId: string) => void) | undefined
 
+  private comparator = (eventToCompare: Event, compareWith: CompareEventsWith) => {
+    return eventToCompare === (compareWith as unknown as Event)
+  }
+
   private id = crypto.randomUUID()
 
-  constructor(initialEvent: Event, options?: CreateChronicleOptions<Event>) {
+  constructor(initialEvent: Event, options?: CreateChronicleOptions<Event, CompareEventsWith>) {
     this.currentEvent = initialEvent
     this.pastEvents = []
     this.onAddEvent = options?.onAddEvent
+    this.comparator = options?.comparator || this.comparator
 
     options?.onAddEvent?.(initialEvent, this.id)
   }
@@ -47,6 +53,10 @@ export class Chronicle<Event> {
     return this.id
   }
 
+  includes<T = CompareEventsWith>(itemToCompare: T): boolean {
+    return Boolean(this.getAllEvents().find((existingEvent) => this.comparator(existingEvent, itemToCompare)))
+  }
+
   // this will transform the internal Events
   transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {
     // Transform the Events
@@ -76,4 +86,4 @@ export class Chronicle<Event> {
   }
 }
 
-export const createChronicle = <Event>(initialEvent: Event, options?: CreateChronicleOptions<Event>) => new Chronicle(initialEvent, options)
+export const createChronicle = <Event, Comparator>(initialEvent: Event, options?: CreateChronicleOptions<Event, Comparator>) => new Chronicle<Event, Comparator>(initialEvent, options)

@@ -107,7 +107,7 @@ describe('createChronicle', () => {
     const onAddEvent = vi.fn()
 
     // Test
-    const chronicle = createChronicle<string>('First event', { onAddEvent })
+    const chronicle = createChronicle('First event', { onAddEvent })
     chronicle.addEvent('Second event')
 
     // Assert
@@ -119,9 +119,9 @@ describe('createChronicle', () => {
   it('should run local onAddEvent callback when adding an event', () => {
     // Setup
     const onAddEvent = vi.fn()
+    const chronicle = createChronicle('First event')
 
     // Test
-    const chronicle = createChronicle<string>('First event')
     chronicle.addEvent('Second event', onAddEvent)
 
     // Assert
@@ -171,5 +171,45 @@ describe('createChronicle', () => {
 
     // Assert
     expect(id).toBeTruthy()
+  })
+
+  it('should check if an event is included', () => {
+    // Setup
+    const chronicle = createChronicle('First event')
+    chronicle.addEvent('Second event')
+
+    // Test
+    const doesChronicleHaveFirstEvent = chronicle.includes('First event')
+    const doesChronicleHaveSecondEvent = chronicle.includes('Second event')
+    const doesChronicleHaveThirdEvent = chronicle.includes('Third event')
+
+    // Assert
+    expect(doesChronicleHaveFirstEvent).toBe(true)
+    expect(doesChronicleHaveSecondEvent).toBe(true)
+    expect(doesChronicleHaveThirdEvent).toBe(false)
+  })
+
+  it('should check if an event is included with custom comparator', () => {
+    // Setup
+    type EventKindName = 'EVENT_1' | 'EVENT_2' | 'EVENT_3'
+    type EventKind = {
+      name: EventKindName
+      timestamp: Date
+    }
+
+    const chronicle = createChronicle<EventKind, EventKindName>({ name: 'EVENT_1', timestamp: new Date() }, {
+      comparator: (eventToCompare, compareWith) => eventToCompare.name === compareWith,
+    })
+    chronicle.addEvent({ name: 'EVENT_2', timestamp: new Date() })
+
+    // Test
+    const doesChronicleHaveFirstEvent = chronicle.includes('EVENT_1')
+    const doesChronicleHaveSecondEvent = chronicle.includes('EVENT_2')
+    const doesChronicleHaveThirdEvent = chronicle.includes('EVENT_3')
+
+    // Assert
+    expect(doesChronicleHaveFirstEvent).toBe(true)
+    expect(doesChronicleHaveSecondEvent).toBe(true)
+    expect(doesChronicleHaveThirdEvent).toBe(false)
   })
 })

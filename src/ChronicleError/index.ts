@@ -4,17 +4,18 @@ type ErrorConstructorParameters = ConstructorParameters<typeof Error>
 type ErrorMessage = ErrorConstructorParameters[0]
 type ErrorOptions = ErrorConstructorParameters[1]
 
-type CreateChronicleErrorOptions<Event> = {
+type CreateChronicleErrorOptions<Event, CompareEventsWith> = {
   errorOptions?: ErrorOptions
-} & CreateChronicleOptions<Event>
+} & CreateChronicleOptions<Event, CompareEventsWith>
 
-export class ChronicleError<Event> extends Error {
-  declare chronicle: Chronicle<Event>
+export class ChronicleError<Event, CompareEventsWith = Event> extends Error {
+  declare chronicle: Chronicle<Event, CompareEventsWith>
 
-  constructor(initialEvent: Event, errorMessage: ErrorMessage, options?: CreateChronicleErrorOptions<Event>) {
+  constructor(initialEvent: Event, errorMessage: ErrorMessage, options?: CreateChronicleErrorOptions<Event, CompareEventsWith>) {
     super(errorMessage, options?.errorOptions)
 
-    this.chronicle = new Chronicle(initialEvent, {
+    this.chronicle = new Chronicle<Event, CompareEventsWith>(initialEvent, {
+      comparator: options?.comparator,
       onAddEvent: options?.onAddEvent,
     })
   }
@@ -37,6 +38,10 @@ export class ChronicleError<Event> extends Error {
 
   getId() {
     return this.chronicle.getId()
+  }
+
+  includes(event: Event): boolean {
+    return this.chronicle.includes(event)
   }
 
   transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {

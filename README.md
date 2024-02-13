@@ -109,7 +109,7 @@ Results in
 */
 ```
 
-Transform a Chronicle's internal Events
+### Transform a Chronicle's internal Events
 ```ts
 const someChronicle = createChronicle('Initial event')
 
@@ -124,3 +124,34 @@ deepCopyOfEvents === someChronical.getAllEvents() // false
 ```
 Note that tranforming a Chronicle's Events _will_ set the Chronicle's Events to the tranformed Events. `transformInternalEvents` will return a deep clone of the transformed Events. The return value of the
 passed in transformation function must match the Chronicle's Event type.
+
+### Check if an Event is included in a Chronicle
+```ts
+const someChronicle = createChronicle('First event')
+
+someChronicle.addEvent('Second event')
+
+someChronicle.includes('First event') // true
+someChronicle.includes('Second event') // true
+someChronicle.includes('Third event') // false
+```
+
+### Check if an Event is included in a Chronicle using custom comparator
+```ts
+    type EventKindName = 'EVENT_1' | 'EVENT_2' | 'EVENT_3'
+    type EventKind = {
+      name: EventKindName
+      timestamp: Date
+    }
+
+// The second generic is what `eventName` will type to
+const chronicle = createChronicle<EventKind, EventKindName>({ name: 'EVENT_1', timestamp: new Date() }, {
+  comparator: (event, eventName) => event.name === eventName,
+})
+chronicle.addEvent({ name: 'EVENT_2', timestamp: new Date() })
+
+// Test
+chronicle.includes('EVENT_1') // true
+chronicle.includes('EVENT_2') // true
+chronicle.includes('EVENT_3') // false
+```
