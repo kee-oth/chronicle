@@ -53,7 +53,7 @@ export class Chronicle<Event, CompareEventsWith = Event> {
     return this.id
   }
 
-  includes<T = CompareEventsWith>(itemToCompare: T): boolean {
+  includes(itemToCompare: CompareEventsWith): boolean {
     return Boolean(this.getAllEvents().find((existingEvent) => this.comparator(existingEvent, itemToCompare)))
   }
 

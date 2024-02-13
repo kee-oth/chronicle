@@ -40,8 +40,8 @@ export class ChronicleError<Event, CompareEventsWith = Event> extends Error {
     return this.chronicle.getId()
   }
 
-  includes(event: Event): boolean {
-    return this.chronicle.includes(event)
+  includes(itemToCompare: CompareEventsWith): boolean {
+    return this.chronicle.includes(itemToCompare)
   }
 
   transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {
