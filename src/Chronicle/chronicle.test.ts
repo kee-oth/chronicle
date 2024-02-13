@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createChronicle } from '../src'
+import { createChronicle } from '..'
 
 describe('createChronicle', () => {
   it('should create an initial Event on Chronicle creation', () => {

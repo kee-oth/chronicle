@@ -1,2 +1,4 @@
-export { createChronicle } from './chronicle'
-export type { Chronicle } from './chronicle'
+export { createChronicle } from './Chronicle'
+export type { Chronicle } from './Chronicle'
+
+export { ChronicleError } from './ChronicleError'
