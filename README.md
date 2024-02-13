@@ -2,7 +2,7 @@
 
 ## 🚧 Work in progress! 🚧
 
-Chronicle's API is subject to change. (We have a lot of ideas! 😁)
+Chronicle's API is subject to change.
 
 Please check back later to see the improvements. And note that this Readme currently acts as the official and only set of documentation.
 
@@ -41,6 +41,9 @@ npm add @keeoth/chronicle
 yarn add @keeoth/chronicle
 pnpm add @keeoth/chronicle
 ```
+### Recipes
+
+Please explore the [Recipes at Stackblitz](https://stackblitz.com/edit/typescript-tfvfqr?devToolsHeight=100&file=index.ts) for a full picture of the library and usage (work in progress!).
 
 ## Quick examples
 
