@@ -19,7 +19,7 @@ export class ChronicleError<Event> extends Error {
     })
   }
 
-  addEvent(newEvent: Event, onAddEvent?: (addedEvent: Event) => void) {
+  addEvent(newEvent: Event, onAddEvent?: (addedEvent: Event, chronicleId: string) => void) {
     return this.chronicle.addEvent(newEvent, onAddEvent)
   }
 
@@ -33,6 +33,10 @@ export class ChronicleError<Event> extends Error {
 
   getAllEvents() {
     return [this.chronicle.getCurrentEvent(), ...this.chronicle.getPastEvents()]
+  }
+
+  getId() {
+    return this.chronicle.getId()
   }
 
   transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {

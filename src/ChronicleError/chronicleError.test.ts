@@ -112,8 +112,8 @@ describe('the ChronicleError class', () => {
 
     // Assert
     expect(onAddEvent).toHaveBeenCalledTimes(2)
-    expect(onAddEvent).toHaveBeenCalledWith('First event')
-    expect(onAddEvent).toHaveBeenCalledWith('Second event')
+    expect(onAddEvent).toHaveBeenCalledWith('First event', chronicleError.getId())
+    expect(onAddEvent).toHaveBeenCalledWith('Second event', chronicleError.getId())
   })
 
   it('should run local onAddEvent callback when adding an event', () => {
@@ -126,7 +126,7 @@ describe('the ChronicleError class', () => {
 
     // Assert
     expect(onAddEvent).toHaveBeenCalledTimes(1)
-    expect(onAddEvent).toHaveBeenCalledWith('Second event')
+    expect(onAddEvent).toHaveBeenCalledWith('Second event', chronicleError.getId())
   })
 
   it('should identify as an Error', () => {
@@ -167,5 +167,16 @@ describe('the ChronicleError class', () => {
     consoleTimeMock.mockReset()
     consoleTimeLogMock.mockReset()
     consoleTimeEndMock.mockReset()
+  })
+
+  it('should have an accessible id', () => {
+    // Setup
+    const chronicleError = new ChronicleError('First event', 'Error!')
+
+    // Test
+    const id = chronicleError.getId()
+
+    // Assert
+    expect(id).toBeTruthy()
   })
 })

@@ -1,32 +1,34 @@
 export type CreateChronicleOptions<Event> = {
-  onAddEvent?: (entry: Event) => void
+  onAddEvent?: (event: Event, chronicleId: string) => void
 }
 
 // Export from package as type, only export  "createChronicle" function
 export class Chronicle<Event> {
   declare private currentEvent: Event
   declare private pastEvents: Event[]
-  declare private onAddEvent: ((entry: Event) => void) | undefined
+  declare private onAddEvent: ((event: Event, chronicleId: string) => void) | undefined
+
+  private id = crypto.randomUUID()
 
   constructor(initialEvent: Event, options?: CreateChronicleOptions<Event>) {
     this.currentEvent = initialEvent
     this.pastEvents = []
     this.onAddEvent = options?.onAddEvent
 
-    options?.onAddEvent?.(initialEvent)
+    options?.onAddEvent?.(initialEvent, this.id)
   }
 
   // (newEvent: Event, onAddEvent?: (addedEvent: Event) => void) => void
-  addEvent(newEvent: Event, onAddEvent?: (addedEvent: Event) => void) {
+  addEvent(newEvent: Event, onAddEvent?: (addedEvent: Event, chronicleId: string) => void) {
     this.pastEvents = [this.currentEvent, ...this.pastEvents]
     // Important to not mutate currentEvent until after setting pastEvents
     this.currentEvent = newEvent
 
     // Chronicle callback
-    this.onAddEvent?.(newEvent)
+    this.onAddEvent?.(newEvent, this.id)
 
     // Local callback
-    onAddEvent?.(newEvent)
+    onAddEvent?.(newEvent, this.id)
   }
 
   getCurrentEvent() {
@@ -39,6 +41,10 @@ export class Chronicle<Event> {
 
   getAllEvents() {
     return [this.currentEvent, ...this.pastEvents]
+  }
+
+  getId() {
+    return this.id
   }
 
   // this will transform the internal Events
@@ -71,6 +77,3 @@ export class Chronicle<Event> {
 }
 
 export const createChronicle = <Event>(initialEvent: Event, options?: CreateChronicleOptions<Event>) => new Chronicle(initialEvent, options)
-
-// Consider Set or Map
-// instanciatchronicale in another file and import to relevant ones? Connectsl them together? Able to follow a "flow"? Won't be specific tp an individual request though, right? use ids somehow?

@@ -35,6 +35,13 @@ Chronicle should be
 * Predictable – Chronicle shouldn't do anything unexpected
 * Intuitive & ergonomic – Chronicle should be easy to use
 
+## Installation
+```bash
+npm add @keeoth/chronicle
+yarn add @keeoth/chronicle
+pnpm add @keeoth/chronicle
+```
+
 ## Quick examples
 
 ### Basic usage

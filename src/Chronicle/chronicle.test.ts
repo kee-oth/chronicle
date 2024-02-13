@@ -112,8 +112,8 @@ describe('createChronicle', () => {
 
     // Assert
     expect(onAddEvent).toHaveBeenCalledTimes(2)
-    expect(onAddEvent).toHaveBeenCalledWith('First event')
-    expect(onAddEvent).toHaveBeenCalledWith('Second event')
+    expect(onAddEvent).toHaveBeenCalledWith('First event', chronicle.getId())
+    expect(onAddEvent).toHaveBeenCalledWith('Second event', chronicle.getId())
   })
 
   it('should run local onAddEvent callback when adding an event', () => {
@@ -126,7 +126,7 @@ describe('createChronicle', () => {
 
     // Assert
     expect(onAddEvent).toHaveBeenCalledTimes(1)
-    expect(onAddEvent).toHaveBeenCalledWith('Second event')
+    expect(onAddEvent).toHaveBeenCalledWith('Second event', chronicle.getId())
   })
 
   it('should run a timer', () => {
@@ -150,6 +150,7 @@ describe('createChronicle', () => {
     }, 2000)
 
     vi.runAllTimers()
+
     // Assert
     expect(consoleTimeMock).toHaveBeenCalledOnce()
     expect(consoleTimeLogMock).toHaveBeenCalledOnce()
@@ -159,5 +160,16 @@ describe('createChronicle', () => {
     consoleTimeMock.mockReset()
     consoleTimeLogMock.mockReset()
     consoleTimeEndMock.mockReset()
+  })
+
+  it('should have an accessible id', () => {
+    // Setup
+    const chronicleError = createChronicle('First event')
+
+    // Test
+    const id = chronicleError.getId()
+
+    // Assert
+    expect(id).toBeTruthy()
   })
 })
