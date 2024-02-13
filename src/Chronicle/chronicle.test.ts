@@ -128,4 +128,36 @@ describe('createChronicle', () => {
     expect(onAddEvent).toHaveBeenCalledTimes(1)
     expect(onAddEvent).toHaveBeenCalledWith('Second event')
   })
+
+  it('should run a timer', () => {
+    // Setup
+    vi.useFakeTimers()
+    const consoleTimeMock = vi.spyOn(console, 'time').mockImplementation(() => undefined)
+    const consoleTimeLogMock = vi.spyOn(console, 'timeLog').mockImplementation(() => undefined)
+    const consoleTimeEndMock = vi.spyOn(console, 'timeEnd').mockImplementation(() => undefined)
+    const chronicle = createChronicle('First event')
+    const timerLabel = 'label'
+
+    // Test
+    chronicle.timerStart(timerLabel)
+
+    setTimeout(() => {
+      chronicle.timerLog(timerLabel)
+    }, 1000)
+
+    setTimeout(() => {
+      chronicle.timerEnd(timerLabel)
+    }, 2000)
+
+    vi.runAllTimers()
+    // Assert
+    expect(consoleTimeMock).toHaveBeenCalledOnce()
+    expect(consoleTimeLogMock).toHaveBeenCalledOnce()
+    expect(consoleTimeEndMock).toHaveBeenCalledOnce()
+
+    // Cleanup
+    consoleTimeMock.mockReset()
+    consoleTimeLogMock.mockReset()
+    consoleTimeEndMock.mockReset()
+  })
 })

@@ -41,7 +41,7 @@ export class Chronicle<Event> {
     return [this.currentEvent, ...this.pastEvents]
   }
 
-  // (eventTransformer: (event: Event) => Event) => Event[] // this will transform the internal Events
+  // this will transform the internal Events
   transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {
     // Transform the Events
     const transformedEvents = this.getAllEvents().map(eventTransformer)
@@ -53,9 +53,24 @@ export class Chronicle<Event> {
 
     return transformedEvents
   }
+
+  timerStart(label: string) {
+    // eslint-disable-next-line no-console
+    console.time(label)
+  }
+
+  timerLog(label: string, ...args: unknown[]) {
+    // eslint-disable-next-line no-console
+    console.timeLog(label, ...args)
+  }
+
+  timerEnd(label: string) {
+    // eslint-disable-next-line no-console
+    console.timeEnd(label)
+  }
 }
 
-export const createChronicle = (initialEvent: Event, options?: CreateChronicleOptions<Event>) => new Chronicle(initialEvent, options)
+export const createChronicle = <Event>(initialEvent: Event, options?: CreateChronicleOptions<Event>) => new Chronicle(initialEvent, options)
 
 // Consider Set or Map
 // instanciatchronicale in another file and import to relevant ones? Connectsl them together? Able to follow a "flow"? Won't be specific tp an individual request though, right? use ids somehow?

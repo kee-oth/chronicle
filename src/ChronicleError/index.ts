@@ -34,4 +34,20 @@ export class ChronicleError<Event> extends Error {
   getAllEvents() {
     return [this.chronicle.getCurrentEvent(), ...this.chronicle.getPastEvents()]
   }
+
+  transformInternalEvents(eventTransformer: (event: Event) => Event): Event[] {
+    return this.chronicle.transformInternalEvents(eventTransformer)
+  }
+
+  timerStart(label: string) {
+    this.chronicle.timerStart(label)
+  }
+
+  timerLog(label: string, ...args: unknown[]) {
+    this.chronicle.timerLog(label, ...args)
+  }
+
+  timerEnd(label: string) {
+    this.chronicle.timerEnd(label)
+  }
 }

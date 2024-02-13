@@ -136,4 +136,36 @@ describe('the ChronicleError class', () => {
     // Assert
     expect(chronicleError instanceof Error).toBe(true)
   })
+
+  it('should run a timer', () => {
+    // Setup
+    vi.useFakeTimers()
+    const consoleTimeMock = vi.spyOn(console, 'time').mockImplementation(() => undefined)
+    const consoleTimeLogMock = vi.spyOn(console, 'timeLog').mockImplementation(() => undefined)
+    const consoleTimeEndMock = vi.spyOn(console, 'timeEnd').mockImplementation(() => undefined)
+    const chronicleError = new ChronicleError('First event', 'Error!')
+    const timerLabel = 'label'
+
+    // Test
+    chronicleError.timerStart(timerLabel)
+
+    setTimeout(() => {
+      chronicleError.timerLog(timerLabel)
+    }, 1000)
+
+    setTimeout(() => {
+      chronicleError.timerEnd(timerLabel)
+    }, 2000)
+
+    vi.runAllTimers()
+    // Assert
+    expect(consoleTimeMock).toHaveBeenCalledOnce()
+    expect(consoleTimeLogMock).toHaveBeenCalledOnce()
+    expect(consoleTimeEndMock).toHaveBeenCalledOnce()
+
+    // Cleanup
+    consoleTimeMock.mockReset()
+    consoleTimeLogMock.mockReset()
+    consoleTimeEndMock.mockReset()
+  })
 })
